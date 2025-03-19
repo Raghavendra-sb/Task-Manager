@@ -1,0 +1,14 @@
+{
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "a simple taskmanger perfoming CRED operations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "NODE"
+  ],
+  "author": "Raghavendra S B",
+  "license": "ISC"
+}
