@@ -72,7 +72,10 @@ const loginUser = asyncHandler(async function (req,res)
     }
 
     const user = await User.findOne(
-        $or({username},{password})
+      {
+        $or:[{username},{password}]
+      }
+       // $or({username},{password})
     )
 
     if(!user)
@@ -80,9 +83,9 @@ const loginUser = asyncHandler(async function (req,res)
         throw new ApiError(404,"User not found");
     }
 
-    const isPasswordCorrect = await User.isPasswordCorrect(password)
+    const isPasswordvalid = await user.isPasswordCorrect(password)
 
-    if(!isPasswordCorrect)
+    if(!isPasswordvalid)
     {
         throw new ApiError(401,"Incorrect Password");
     }
@@ -109,4 +112,5 @@ const loginUser = asyncHandler(async function (req,res)
 
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
+export{loginUser}
 
