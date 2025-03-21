@@ -24,7 +24,7 @@ const registerUser = asyncHandler(async function (req,res) {
 
     if(!username)
     {
-        throw new ApiError(400,"please enter the username");
+        throw new ApiError();
     }
     if(!password)
         {
@@ -58,5 +58,55 @@ const registerUser = asyncHandler(async function (req,res) {
     )
 })
 
+const loginUser = asyncHandler(async function (req,res)
+{
+    const {username,password}=req.body;
+
+    if(!username)
+    {
+        throw new ApiError(400,"please enter the username")
+    }
+    if(!password)
+    {
+        throw new ApiError(400,"please enter the password")
+    }
+
+    const user = await User.findOne(
+        $or({username},{password})
+    )
+
+    if(!user)
+    {
+        throw new ApiError(404,"User not found");
+    }
+
+    const isPasswordCorrect = await User.isPasswordCorrect(password)
+
+    if(!isPasswordCorrect)
+    {
+        throw new ApiError(401,"Incorrect Password");
+    }
+
+    const {accessToken,refreshToken}= await generateAccessTokenandRefreshToken(user._id);
+
+    const logedInUser = await User.findOne(user._id).select("-password -refreshToken");
+    
+    const options = 
+    {
+        httpOnly:true,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Only secure in production (HTTPS)
+        sameSite: "strict", 
+    }
+
+    res.status(200).
+    cookie("accessToken",accessToken,options).
+    cookie("refreshToken",refreshToken,options).
+    json(new ApiResponse(200,{user:loginUser,accessToken,refreshToken},"User logged in successfully"))
+
+})
+
+
 export {registerUser}
+export {generateAccessTokenandRefreshToken}
 
