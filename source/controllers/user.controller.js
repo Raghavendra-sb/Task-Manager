@@ -105,7 +105,7 @@ const loginUser = asyncHandler(async function (req,res)
     res.status(200).
     cookie("accessToken",accessToken,options).
     cookie("refreshToken",refreshToken,options).
-    json(new ApiResponse(200,{user:loginUser,accessToken,refreshToken},"User logged in successfully"))
+    json(new ApiResponse(200,{user:logedInUser,accessToken,refreshToken},"User logged in successfully"))
 
 })
 
@@ -124,16 +124,19 @@ const logoutUser = asyncHandler(async function (req,res){
    const options =
    {
       httpOnly:true,
-      secure:true
+       secure: process.env.NODE_ENV === "production" ? true : false,
+       sameSite: "strict"
    }
 
    res.status(200).
-   clearCookie("accessToken",accessToken,options).
-   clearCookie("refreshToken",refreshToken,options).
-   json( new ApiError(200,{user:logoutUser,refreshToken},"Userlog out successfully"));
+   clearCookie("accessToken",options).
+   clearCookie("refreshToken",options).
+   json(new ApiResponse(200, {}, "User logged out successfully"));
+
 })
 
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
 export{loginUser}
+export {logoutUser}
 
