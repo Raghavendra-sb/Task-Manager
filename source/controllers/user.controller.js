@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {User} from "../models/user.model.js"
 import jwt from "jsonwebtoken";
 import mongoose  from "mongoose";
+import { Task } from "../models/task.model.js";
 
 const generateAccessTokenandRefreshToken = async function (id){
     const user = await User.findById(id);
@@ -135,8 +136,32 @@ const logoutUser = asyncHandler(async function (req,res){
 
 })
 
+const createTask = asyncHandler(async function(req, res){
+    const {title,description,status} = req.body;
+
+   
+
+    const task = await Task.create(
+        {
+            title,
+            description,
+            status,
+        }
+    )
+   
+    const taskCreated = await Task.findById(task._id);
+    if(!taskCreated)
+    {
+        throw new ApiError(500,"Task creation failed");
+    }
+
+    return res.status(201).
+    json(new ApiResponse(201,taskCreated,"Task created successfully"));
+
+})
+
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
 export{loginUser}
 export {logoutUser}
-
+export {createTask}
