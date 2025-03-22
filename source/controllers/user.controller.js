@@ -206,6 +206,17 @@ const updateTask = asyncHandler(async function(req,res){
     return res.status(200).json(new ApiResponse(200,updatedTask,"Task details updated successfully"));
 })
 
+const deleteTask = asyncHandler(async function(req,res){
+    const {taskId}=req.params;
+    const task = await Task.findOne({_id:taskId,"user._id":req.user._id})
+    if(!task)
+    {
+        throw new ApiError(404,"Task not found in the DB")
+    }
+    await Task.findByIdAndDelete(taskId);
+    return res.status(200).json(new ApiResponse(200, {}, "Task deleted successfully"));
+})
+
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
 export{loginUser}
@@ -213,3 +224,4 @@ export {logoutUser}
 export {createTask}
 export {getTask}
 export{updateTask}
+export {deleteTask}
