@@ -180,9 +180,36 @@ const getTask = asyncHandler(async function(req,res){
     return res.status(200).json(new ApiResponse(200, task, "Tasks fetched successfully"));
 })
 
+const updateTask = asyncHandler(async function(req,res){
+    
+    const {title,description,status}=req.body;
+    const {taskId}=req.params;
+
+    const task = await Task.findOne({ _id: taskId, "user._id": req.user._id });
+
+    if (!task) {
+        throw new ApiError(404, "Task not found or unauthorized");
+    }
+
+    // Only update provided fields (prevent empty values from overriding existing ones)
+    const updatedFields = {};
+    if (title) updatedFields.title = title;
+    if (description) updatedFields.description = description;
+    if (status) updatedFields.status = status;
+
+    // Update task with selected fields
+    const updatedTask = await Task.findByIdAndUpdate(
+        taskId,
+        { $set: updatedFields },
+        { new: true, runValidators: true }
+    );
+    return res.status(200).json(new ApiResponse(200,updatedTask,"Task details updated successfully"));
+})
+
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
 export{loginUser}
 export {logoutUser}
 export {createTask}
 export {getTask}
+export{updateTask}
