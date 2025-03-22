@@ -19,9 +19,11 @@ const taskSchema = new mongoose.Schema(
             default:"pending"
         },
         user:
-        {   type:mongoose.Schema.Types.ObjectId,
-            ref:"User",
-            required:true
+         {   //type:Schema.Types.ObjectId,
+        //     ref:"User",
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+            username: { type: String, required: true }
+            
 
         }
     }

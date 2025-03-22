@@ -138,7 +138,9 @@ const logoutUser = asyncHandler(async function (req,res){
 
 const createTask = asyncHandler(async function(req, res){
     const {title,description,status} = req.body;
-
+    if (!req.user || !req.user._id || !req.user.username) {
+        throw new ApiError(401, "User information is missing. Please log in again.");
+    } 
    
 
     const task = await Task.create(
@@ -146,6 +148,10 @@ const createTask = asyncHandler(async function(req, res){
             title,
             description,
             status,
+            user: {
+                _id: req.user._id,
+                username: req.user.username // Store username inside the task
+            }
         }
     )
    
