@@ -166,8 +166,19 @@ const createTask = asyncHandler(async function(req, res){
 
 })
 
+const getTask = asyncHandler(async function(req,res){
+
+    const task = await Task.findById(req.user._id);
+    if(!task)
+    {
+        new ApiError(500,"User Task not found");
+    }
+    return res.status(201).json(new ApiResponse(201,task,"Tasks fetched successfully"));
+})
+
 export {registerUser}
 export {generateAccessTokenandRefreshToken}
 export{loginUser}
 export {logoutUser}
 export {createTask}
+export {getTask}
