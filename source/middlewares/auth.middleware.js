@@ -30,3 +30,15 @@ export const verifyJWT = asyncHandler(async (req,res,next)=>
         throw new ApiError(404,"User not authenticated")
     }
 })
+
+export const verifyUser = (...allowedRoles) => asyncHandler(async (req,res,next)=>{
+ 
+  if( !req.user || !allowedRoles.includes(req.user.role))
+  {
+      throw new ApiError(403,"User not authenticated")
+  }
+  next();
+
+})
+
+
